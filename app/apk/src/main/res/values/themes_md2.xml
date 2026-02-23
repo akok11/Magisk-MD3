@@ -43,21 +43,21 @@
     <!--1st party themes-->
 
     <style name="ThemeFoundationMD2.Piplup">
-        <item name="colorPrimary">#4EAFF5</item>
+        <item name="colorPrimary">#1D1B20</item>
         <item name="colorPrimaryVariant">#804EAFF5</item>
-        <item name="colorSecondary">#3E78AF</item>
+        <item name="colorSecondary">#1D192B</item>
         <item name="colorSecondaryVariant">#803E78AF</item>
-        <item name="colorSurface">#F9F9F9</item>
-        <item name="colorSurfaceVariant">#EEEEEE</item>
+        <item name="colorSurface">#FEF7FF</item>
+        <item name="colorSurfaceVariant">#F3EDF7</item>
         <item name="colorSurfaceSurfaceVariant">?colorSurface</item>
-        <item name="colorOnPrimary">#F9F9F9</item>
+        <item name="colorOnPrimary">#FEF7FF</item>
         <item name="colorOnPrimaryVariant">#D9E6E6E6</item>
-        <item name="colorOnSecondary">#F9F9F9</item>
+        <item name="colorOnSecondary">#FEF7FF</item>
         <item name="colorOnBackground">?colorOnSurface</item>
         <item name="colorError">#CC0047</item>
-        <item name="colorOnError">#F9F9F9</item>
-        <item name="colorOnSurface">#444444</item>
-        <item name="colorOnSurfaceVariant">#BF444444</item>
+        <item name="colorOnError">#FEF7FF</item>
+        <item name="colorOnSurface">#1D1B20</item>
+        <item name="colorOnSurfaceVariant">#1D1B20</item>
         <item name="colorDisabled">#808080</item>
         <item name="colorDisabledVariant">#66808080</item>
     </style>
