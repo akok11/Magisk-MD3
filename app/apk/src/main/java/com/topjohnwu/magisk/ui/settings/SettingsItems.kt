@@ -32,6 +32,17 @@ object Customization : BaseSettingsItem.Section() {
     override val title = CoreR.string.settings_customization.asText()
 }
 
+object ThemeMode : BaseSettingsItem.Selector() {
+    override var value
+        get() = if (Config.darkTheme) 1 else 0
+        set(value) {
+            Config.darkTheme = (value == 1)
+        }
+
+    override val title = CoreR.string.section_theme.asText()
+    override val entryRes = CoreR.array.theme_mode
+}
+
 object Language : BaseSettingsItem.Selector() {
     private val names: Array<String> get() = LocaleSetting.available.names
     private val tags: Array<String> get() = LocaleSetting.available.tags
