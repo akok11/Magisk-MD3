@@ -57,10 +57,10 @@ object LanguageSystem : BaseSettingsItem.Blank() {
         }
 }
 
-object Theme : BaseSettingsItem.Blank() {
-    override val icon = R.drawable.ic_paint
-    override val title = CoreR.string.section_theme.asText()
-}
+// object Theme : BaseSettingsItem.Blank() {
+//     override val icon = R.drawable.ic_paint
+//     override val title = CoreR.string.section_theme.asText()
+// }
 
 // --- App
 
