@@ -15,24 +15,30 @@
         style="@style/WidgetFoundation.Card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:cardElevation="2dp"
+        app:cardCornerRadius="12dp"
         android:focusable="false">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="@dimen/l1"
-            android:paddingTop="@dimen/l_50"
+            android:paddingTop="@dimen/l1"
             android:paddingEnd="@dimen/l1"
-            android:paddingBottom="@dimen/l_50"
+            android:paddingBottom="@dimen/l_75"
             tools:layout_gravity="center">
 
             <ImageView
                 android:id="@+id/home_magisk_icon"
                 style="@style/WidgetFoundation.Icon.Primary"
-                android:padding="@dimen/l_25"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="4dp"
+                android:alpha="0.9"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_magisk_outline" />
+                app:srcCompat="@drawable/ic_magisk_outline"
+                app:tint="?colorPrimary" />
 
             <TextView
                 android:id="@+id/home_magisk_title"
@@ -41,7 +47,9 @@
                 android:layout_marginStart="@dimen/l1"
                 android:text="@string/magisk"
                 android:textAppearance="@style/AppearanceFoundation.Title"
-                android:textColor="?colorPrimary"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 android:maxLines="1"
                 android:ellipsize="end"
                 app:layout_constraintBottom_toBottomOf="@+id/home_magisk_icon"
@@ -65,7 +73,8 @@
                     android:onClick="@{() -> viewModel.onMagiskPressed()}"
                     android:text="@string/update"
                     android:textAllCaps="false"
-                    android:layout_gravity="end"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
                     app:icon="@drawable/ic_update_md2" />
 
                 <Button
@@ -73,12 +82,11 @@
                     gone="@{viewModel.magiskState == State.OUTDATED}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="end"
                     android:onClick="@{() -> viewModel.onMagiskPressed()}"
                     android:text="@string/install"
+                    android:textColor="?colorPrimary"
                     android:textAllCaps="false"
                     app:icon="@drawable/ic_install"/>
-
             </FrameLayout>
 
             <androidx.constraintlayout.widget.Barrier
@@ -93,9 +101,10 @@
                 android:id="@+id/ksu_divider"
                 android:layout_width="0dp"
                 android:layout_height="1dp"
-                android:layout_marginTop="@dimen/l_50"
-                android:layout_marginBottom="@dimen/l_50"
-                android:background="#1F000000"
+                android:layout_marginTop="@dimen/l_75"
+                android:layout_marginBottom="@dimen/l_75"
+                android:background="@android:color/darker_gray"
+                android:alpha="0.15"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/home_magisk_title_barrier" />
@@ -122,33 +131,31 @@
                             style="@style/W.Home.Item.Top"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent">
-
                             <TextView
                                 style="@style/W.Home.ItemContent"
+                                android:alpha="0.7"
                                 android:text="@string/home_installed_version" />
-
                             <TextView
                                 style="@style/W.Home.ItemContent.Right"
+                                android:textStyle="italic"
                                 android:text="@{viewModel.magiskInstalledVersion}"
                                 tools:text="22.0 (22000)" />
-
                         </LinearLayout>
-                        
+
                         <LinearLayout
                             android:id="@+id/home_device_details_zygisk"
                             style="@style/W.Home.Item"
                             app:layout_constraintStart_toStartOf="@+id/home_magisk_installed_version"
                             app:layout_constraintTop_toBottomOf="@+id/home_magisk_installed_version">
-
                             <TextView
                                 style="@style/W.Home.ItemContent"
+                                android:alpha="0.7"
                                 android:text="@string/zygisk" />
-
                             <TextView
                                 style="@style/W.Home.ItemContent.Right"
                                 android:text="@{Info.isZygiskEnabled ? @string/yes : @string/no}"
+                                tools:textColor="@color/md_green_500"
                                 tools:text="Yes" />
-
                         </LinearLayout>
 
                         <LinearLayout
@@ -156,26 +163,18 @@
                             style="@style/W.Home.Item.Bottom"
                             app:layout_constraintStart_toStartOf="@+id/home_magisk_installed_version"
                             app:layout_constraintTop_toBottomOf="@+id/home_device_details_zygisk">
-
                             <TextView
                                 style="@style/W.Home.ItemContent"
+                                android:alpha="0.7"
                                 android:text="Ramdisk" />
-
                             <TextView
                                 style="@style/W.Home.ItemContent.Right"
                                 android:text="@{Info.ramdisk ? @string/yes : @string/no }"
                                 tools:text="Yes" />
-
                         </LinearLayout>
-
                     </androidx.constraintlayout.widget.ConstraintLayout>
-
                 </LinearLayout>
-
             </HorizontalScrollView>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </com.google.android.material.card.MaterialCardView>
-
 </layout>
