@@ -5,7 +5,6 @@
     android:layout_marginHorizontal="16dp"
     android:layout_marginVertical="8dp"
     app:cardCornerRadius="24dp"
-    app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
     app:strokeWidth="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -31,12 +30,12 @@
             android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/home_magisk_icon"
-            app:layout_constraintEnd_toStartOf="@+id/home_magisk_button"
+            app:layout_constraintEnd_toStartOf="@+id/home_magisk_button_container"
             app:layout_constraintStart_toEndOf="@+id/home_magisk_icon"
             app:layout_constraintTop_toTopOf="@+id/home_magisk_icon" />
 
         <FrameLayout
-            android:id="@+id/home_magisk_button"
+            android:id="@+id/home_magisk_button_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
@@ -66,7 +65,6 @@
             android:layout_height="1dp"
             android:layout_marginTop="16dp"
             android:background="?attr/colorOutlineVariant"
-            android:alpha="0.5"
             app:layout_constraintTop_toBottomOf="@id/home_magisk_icon" />
 
         <LinearLayout
@@ -112,7 +110,6 @@
                     android:layout_height="wrap_content"
                     android:text="@{Info.isZygiskEnabled ? @string/yes : @string/no}"
                     android:textStyle="bold"
-                    android:textColor="@{Info.isZygiskEnabled ? ?attr/colorPrimary : ?attr/onSurfaceVariant}"
                     android:textSize="14sp" />
             </LinearLayout>
 
