@@ -12,51 +12,57 @@
             type="com.topjohnwu.magisk.ui.home.HomeViewModel" />
     </data>
 
-    <LinearLayout
-        android:layout_width="match_parent"        android:layout_height="wrap_content"
-        app:cardElevation="2dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingStart="@dimen/l1"
-        android:paddingTop="@dimen/l_25"
-        android:paddingEnd="@dimen/l1"
-        android:paddingBottom="@dimen/l_25">
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp" 
+        app:cardElevation="2dp">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{item.handle}"
-            android:textAppearance="@style/AppearanceFoundation.Caption"
-            android:textStyle="bold"
-            android:alpha="0.7"
-            android:minWidth="80dp"
-            tools:text="\@topjohnwu" />
-
-        <View
-            android:id="@+id/ksu_divider_vertical"
-            android:layout_width="1dp"
-            android:layout_height="16dp"
-            android:layout_marginStart="@dimen/l_50"
-            android:layout_marginEnd="@dimen/l_50"
-            android:background="@android:color/darker_gray"
-            android:alpha="0.15" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            app:items="@{item.items}"
-            app:extraBindings="@{viewModel.extraBindings}"
-            app:nestedScrollingEnabled="@{false}"
-            android:overScrollMode="never"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:clipToPadding="false"
-            android:fadingEdgeLength="@dimen/l1"
             android:orientation="horizontal"
-            android:requiresFadingEdge="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:itemCount="3"
-            tools:listitem="@layout/item_icon_link" />
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/l1"
+            android:paddingTop="@dimen/l_25"
+            android:paddingEnd="@dimen/l1"
+            android:paddingBottom="@dimen/l_25">
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{item.handle}"
+                android:textAppearance="@style/AppearanceFoundation.Caption"
+                android:textStyle="bold"
+                android:alpha="0.7"
+                android:minWidth="80dp"
+                tools:text="\@topjohnwu" />
 
+            <View
+                android:id="@+id/ksu_divider_vertical"
+                android:layout_width="1dp"
+                android:layout_height="16dp"
+                android:layout_marginStart="@dimen/l_50"
+                android:layout_marginEnd="@dimen/l_50"
+                android:background="@android:color/darker_gray"
+                android:alpha="0.15" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                app:items="@{item.items}"
+                app:extraBindings="@{viewModel.extraBindings}"
+                app:nestedScrollingEnabled="@{false}"
+                android:overScrollMode="never"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:fadingEdgeLength="@dimen/l1"
+                android:orientation="horizontal"
+                android:requiresFadingEdge="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_icon_link" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 </layout>
