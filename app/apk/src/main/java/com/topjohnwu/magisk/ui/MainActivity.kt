@@ -5,6 +5,8 @@ import android.Manifest.permission.REQUEST_INSTALL_PACKAGES
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ApplicationInfo
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -91,6 +93,9 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
         }
 
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+
+        // --- 核心修改：强制取消底栏点击涟漪颜色 ---
+        binding.mainNavigation.itemRippleColor = ColorStateList.valueOf(Color.TRANSPARENT)
 
         navigation.addOnDestinationChangedListener { _, destination, _ ->
             isRootFragment = when (destination.id) {
