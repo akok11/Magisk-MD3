@@ -83,7 +83,7 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
         showUnsupportedMessage()
         askForHomeShortcut()
 
-        // 这里的逻辑保持不变
+        // Ask permission to post notifications for background update check
         if (Config.checkUpdate) {
             withPermission(Manifest.permission.POST_NOTIFICATIONS) {
                 Config.checkUpdate = it
@@ -102,13 +102,7 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
             }
 
             setDisplayHomeAsUpEnabled(!isRootFragment)
-            
-            // --- 修改点 1：切换页面时，若未 Root 始终强制隐藏导航栏 ---
-            if (!Info.env.isActive) {
-                binding.mainNavigation.isGone = true
-            } else {
-                requestNavigationHidden(!isRootFragment)
-            }
+            requestNavigationHidden(!isRootFragment)
 
             binding.mainNavigation.menu.forEach {
                 if (it.itemId == destination.id) {
@@ -123,16 +117,12 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
             getScreen(it.itemId)?.navigate()
             true
         }
-        
-        // --- 修改点 2：初始化底栏状态 ---
-        if (!Info.env.isActive) {
-            // 未获取 Root 时，物理隐藏整个导航栏
-            binding.mainNavigation.isGone = true
-        } else {
-            binding.mainNavigation.menu.apply {
-                findItem(R.id.superuserFragment)?.isEnabled = Info.showSuperUser
-                findItem(R.id.modulesFragment)?.isEnabled = Info.env.isActive && LocalModule.loaded()
-            }
+        binding.mainNavigation.setOnItemReselectedListener {
+            // https://issuetracker.google.com/issues/124538620
+        }
+        binding.mainNavigation.menu.apply {
+            findItem(R.id.superuserFragment)?.isEnabled = Info.showSuperUser
+            findItem(R.id.modulesFragment)?.isEnabled = Info.env.isActive && LocalModule.loaded()
         }
 
         val section =
@@ -143,9 +133,8 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
 
         getScreen(section)?.navigate()
 
-        // --- 修改点 3：确保首屏加载时导航栏状态正确 ---
-        if (!isRootFragment || !Info.env.isActive) {
-            requestNavigationHidden(hide = true, requiresAnimation = savedInstanceState == null)
+        if (!isRootFragment) {
+            requestNavigationHidden(requiresAnimation = savedInstanceState == null)
         }
     }
 
@@ -167,17 +156,16 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
 
     internal fun requestNavigationHidden(hide: Boolean = true, requiresAnimation: Boolean = true) {
         val bottomView = binding.mainNavigation
-        // --- 修改点 4：强制干预隐藏逻辑 ---
-        val shouldHide = hide || !Info.env.isActive
         if (requiresAnimation) {
             bottomView.isVisible = true
-            bottomView.isHidden = shouldHide
+            bottomView.isHidden = hide
         } else {
-            bottomView.isGone = shouldHide
+            bottomView.isGone = hide
         }
     }
 
     fun invalidateToolbar() {
+        //binding.mainToolbar.startAnimations()
         binding.mainToolbar.invalidate()
     }
 
@@ -200,7 +188,6 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
         }
     }
 
-    // 剩余代码（showInvalidStateMessage, showUnsupportedMessage, askForHomeShortcut）保持原样...
     @SuppressLint("InlinedApi")
     override fun showInvalidStateMessage(): Unit = runOnUiThread {
         MagiskDialog(this).apply {
@@ -270,6 +257,7 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
     private fun askForHomeShortcut() {
         if (isRunningAsStub && !Config.askedHome &&
             ShortcutManagerCompat.isRequestPinShortcutSupported(this)) {
+            // Ask and show dialog
             Config.askedHome = true
             MagiskDialog(this).apply {
                 setTitle(CoreR.string.add_shortcut_title)
