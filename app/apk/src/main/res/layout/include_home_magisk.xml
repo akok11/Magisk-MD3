@@ -136,7 +136,7 @@
                                 android:text="@string/home_installed_version" />
                             <TextView
                                 style="@style/W.Home.ItemContent.Right"
-                                android:textStyle="italic"
+                                
                                 android:text="@{viewModel.magiskInstalledVersion}"
                                 tools:text="22.0 (22000)" />
                         </LinearLayout>
