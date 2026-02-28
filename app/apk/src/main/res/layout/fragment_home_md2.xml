@@ -134,9 +134,7 @@
                 android:layout_marginStart="@dimen/l1"
                 android:layout_marginEnd="@dimen/l1"
                 android:layout_marginTop="@dimen/l1"
-                android:focusable="false"
-                app:cardElevation="2dp"
-                app:cardUseCompatPadding="true">
+                android:focusable="false">
 
                 <LinearLayout
                     android:layout_width="match_parent"
