@@ -15,7 +15,6 @@
         style="@style/WidgetFoundation.Card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardElevation="2dp"
         android:focusable="false">
 
         <androidx.constraintlayout.widget.ConstraintLayout
