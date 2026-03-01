@@ -40,6 +40,8 @@ class HomeViewModel(
         LOADING, INVALID, OUTDATED, UP_TO_DATE
     }
 
+    // 注意：这里的 IDs 数组在 XML 中通过 DataBinding 引用非常容易出错
+    // 建议在 XML 中直接写死字符串，这里保留仅作备份
     val magiskTitleBarrierIds =
         intArrayOf(R.id.home_magisk_icon, R.id.home_magisk_title, R.id.home_magisk_button)
     val appTitleBarrierIds =
@@ -114,6 +116,7 @@ class HomeViewModel(
             stateManagerProgress = progress.times(100f).roundToInt()
     }
 
+    // 关键修正：确保函数能接收 link 字符串，并跳转
     fun onLinkPressed(link: String) = object : ViewEvent(), ContextExecutor {
         override fun invoke(context: Context) {
             val intent = Intent(Intent.ACTION_VIEW, link.toUri())
@@ -139,6 +142,7 @@ class HomeViewModel(
     }
 
     fun onMagiskPressed() = withExternalRW {
+        // 导航到安装页面
         HomeFragmentDirections.actionHomeFragmentToInstallFragment().navigate()
     }
 
@@ -160,7 +164,7 @@ class HomeViewModel(
     val showTest = false
     fun onTestPressed() = object : ViewEvent(), ActivityExecutor {
         override fun invoke(activity: UIActivity<*>) {
-            /* Entry point to trigger test events within the app */
+            /* 测试入口 */
         }
     }.publish()
 }
