@@ -13,9 +13,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.content.pm.ShortcutManagerCompat
-import androidx.core.view.forEach
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
+import androidx.core.view.*
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import com.topjohnwu.magisk.MainDirections
@@ -81,6 +79,13 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
     @SuppressLint("InlinedApi")
     override fun onCreateUi(savedInstanceState: Bundle?) {
         setContentView()
+        
+        // 核心修复 1: 确保底栏不会干扰 Fragment 的触摸事件分发
+        ViewCompat.setOnApplyWindowInsetsListener(binding.mainNavigation) { v, insets ->
+            v.onApplyWindowInsets(insets)
+            insets
+        }
+
         showUnsupportedMessage()
         askForHomeShortcut()
 
@@ -90,13 +95,17 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
             }
         }
 
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        // 核心修复 2: 改为 ADJUST_PAN，防止底栏改变视口高度导致滑动死锁
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
-        // 1. 强制取消底栏点击涟漪颜色
-        binding.mainNavigation.itemRippleColor = ColorStateList.valueOf(Color.TRANSPARENT)
+        // 核心修复 3: 取消底栏涟漪并禁用其强制获取焦点
+        binding.mainNavigation.apply {
+            itemRippleColor = ColorStateList.valueOf(Color.TRANSPARENT)
+            isFocusable = false
+            isFocusableInTouchMode = false
+        }
 
         navigation.addOnDestinationChangedListener { _, destination, _ ->
-            // 2. 将设置页设为根Fragment，保证底栏不被隐藏
             isRootFragment = when (destination.id) {
                 R.id.homeFragment,
                 R.id.modulesFragment,
@@ -122,7 +131,7 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
             getScreen(it.itemId)?.navigate()
             true
         }
-        
+
         binding.mainNavigation.setOnItemReselectedListener { }
 
         binding.mainNavigation.menu.apply {
@@ -173,7 +182,6 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
         binding.mainToolbar.invalidate()
     }
 
-    // 3. 处理通过 Intent 或 String 跳转的情况
     private fun getScreen(name: String?): NavDirections? {
         return when (name) {
             Const.Nav.SUPERUSER -> MainDirections.actionSuperuserFragment()
@@ -183,7 +191,6 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
         }
     }
 
-    // 4. 处理底栏菜单点击跳转
     private fun getScreen(id: Int): NavDirections? {
         return when (id) {
             R.id.homeFragment -> MainDirections.actionHomeFragment()
