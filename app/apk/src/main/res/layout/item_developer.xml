@@ -17,48 +17,41 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingStart="@dimen/l1"
-        android:paddingTop="@dimen/l_25"
-        android:paddingEnd="@dimen/l1"
-        android:paddingBottom="@dimen/l_25"
-        app:cardElevation="2dp"
-app:cardUseCompatPadding="true">
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="12dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{item.handle}"
-            android:textAppearance="@style/AppearanceFoundation.Caption"
+            android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:textStyle="bold"
-            android:alpha="0.7"
-            android:minWidth="80dp"
+            android:minWidth="100dp"
             tools:text="\@topjohnwu" />
 
         <View
             android:id="@+id/ksu_divider_vertical"
             android:layout_width="1dp"
-            android:layout_height="16dp"
-            android:layout_marginStart="@dimen/l_50"
-            android:layout_marginEnd="@dimen/l_50"
-            android:background="@android:color/darker_gray"
-            android:alpha="0.15" />
+            android:layout_height="18dp"
+            android:layout_marginHorizontal="12dp"
+            android:background="?attr/colorOutlineVariant"
+            android:alpha="0.6" />
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/developer_links_list"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:overScrollMode="never"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:items="@{item.items}"
             app:extraBindings="@{viewModel.extraBindings}"
             app:nestedScrollingEnabled="@{false}"
-            android:overScrollMode="never"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:clipToPadding="false"
-            android:fadingEdgeLength="@dimen/l1"
-            android:orientation="horizontal"
-            android:requiresFadingEdge="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:itemCount="3"
             tools:listitem="@layout/item_icon_link" />
 
     </LinearLayout>
-
 </layout>
