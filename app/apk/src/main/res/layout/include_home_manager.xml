@@ -11,49 +11,43 @@
     </data>
 
     <com.google.android.material.card.MaterialCardView
-        style="@style/WidgetFoundation.Card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+        app:cardElevation="0dp"
+        app:strokeWidth="0dp"
         android:focusable="false">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="@dimen/l1"
-            android:paddingTop="@dimen/l1"
-            android:paddingEnd="@dimen/l1"
-            android:paddingBottom="@dimen/l_75"
-            tools:layout_gravity="center">
+            android:padding="20dp">
 
             <ImageView
                 android:id="@+id/home_manager_icon"
-                style="@style/WidgetFoundation.Icon.Primary"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:padding="4dp"
-                android:alpha="0.9"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_manager"
-                app:tint="?colorPrimary" />
+                app:tint="?attr/colorPrimary" />
 
             <TextView
                 android:id="@+id/home_manager_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/l1"
+                android:layout_marginStart="16dp"
                 android:text="@string/home_app_title"
-                android:textAppearance="@style/AppearanceFoundation.Title"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="18sp"
+                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                android:textColor="?attr/colorOnSurface"
                 android:textStyle="bold"
                 android:maxLines="1"
                 android:ellipsize="end"
                 app:layout_constraintBottom_toBottomOf="@+id/home_manager_icon"
                 app:layout_constraintEnd_toStartOf="@+id/home_manager_button"
                 app:layout_constraintStart_toEndOf="@+id/home_manager_icon"
-                app:layout_constraintTop_toTopOf="@+id/home_manager_icon"
-                tools:text="@string/home_app_title" />
+                app:layout_constraintTop_toTopOf="@+id/home_manager_icon" />
 
             <FrameLayout
                 android:id="@+id/home_manager_button"
@@ -64,25 +58,24 @@
                 app:layout_constraintTop_toTopOf="@+id/home_manager_title">
 
                 <Button
-                    style="@style/WidgetFoundation.Button"
+                    style="@style/Widget.Material3.Button.TonalButton"
                     gone="@{viewModel.appState != State.OUTDATED}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="@{() -> viewModel.onManagerPressed()}"
                     android:text="@string/update"
                     android:textAllCaps="false"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    app:icon="@drawable/ic_update_md2" />
+                    app:icon="@drawable/ic_update_md2"
+                    app:cornerRadius="20dp" />
 
                 <Button
-                    style="@style/WidgetFoundation.Button.Text"
-                    gone="@{viewModel.appState != State.UP_TO_DATE}"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    gone="@{viewModel.appState == State.OUTDATED}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="@{() -> viewModel.onManagerPressed()}"
                     android:text="@string/install"
-                    android:textColor="?colorPrimary"
+                    android:textColor="?attr/colorPrimary"
                     android:textAllCaps="false"
                     app:icon="@drawable/ic_install"/>
             </FrameLayout>
@@ -92,17 +85,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="bottom"
-                app:referencedIds="@{viewModel.appTitleBarrierIds}"
-                tools:constraint_referenced_ids="home_manager_icon,home_manager_title,home_manager_button" />
+                app:referencedIds="home_manager_icon,home_manager_title,home_manager_button" />
 
             <View
                 android:id="@+id/ksu_divider"
                 android:layout_width="0dp"
                 android:layout_height="1dp"
-                android:layout_marginTop="@dimen/l_75"
-                android:layout_marginBottom="@dimen/l_75"
-                android:background="@android:color/darker_gray"
-                android:alpha="0.15"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="?attr/colorOutlineVariant"
+                android:alpha="0.4"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/home_manager_title_barrier" />
@@ -110,8 +102,6 @@
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fadingEdgeLength="@dimen/l1"
-                android:requiresFadingEdge="horizontal"
                 android:scrollbars="none"
                 app:layout_constraintTop_toBottomOf="@+id/ksu_divider">
 
@@ -120,64 +110,78 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:divider="?android:attr/dividerHorizontal"
+                        android:showDividers="middle">
 
                         <LinearLayout
-                            android:id="@+id/home_manager_latest_version"
-                            style="@style/W.Home.Item.Top"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent">
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingEnd="24dp">
                             <TextView
-                                style="@style/W.Home.ItemContent"
-                                android:alpha="0.7"
-                                android:text="@string/home_latest_version" />
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/home_latest_version"
+                                android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                                android:alpha="0.6" />
                             <TextView
-                                style="@style/W.Home.ItemContent.Right"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 android:text="@{viewModel.managerRemoteVersion}"
-                                tools:text="22.0 (22000) (16)" />
+                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                                tools:text="22.0 (22000)" />
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/home_manager_installed_version"
-                            style="@style/W.Home.Item"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/home_manager_latest_version">
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingEnd="24dp">
                             <TextView
-                                style="@style/W.Home.ItemContent"
-                                android:alpha="0.7"
-                                android:text="@string/home_installed_version" />
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/home_installed_version"
+                                android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                                android:alpha="0.6" />
                             <TextView
-                                style="@style/W.Home.ItemContent.Right"
-                                
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 android:text="@{viewModel.managerInstalledVersion}"
-                                tools:text="22.0 (22000) (16)" />
+                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                                tools:text="22.0 (22000)" />
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/home_manager_internal_connection"
-                            style="@style/W.Home.Item.Bottom"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/home_manager_installed_version">
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingEnd="24dp">
                             <TextView
-                                style="@style/W.Home.ItemContent"
-                                android:alpha="0.7"
-                                android:text="@string/home_package" />
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/home_package"
+                                android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                                android:alpha="0.6" />
                             <TextView
-                                android:id="@+id/home_manager_extra_connection_value"
-                                style="@style/W.Home.ItemContent.Right"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 android:text="@{context.packageName}"
+                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                                 tools:text="com.topjohnwu.magisk" />
                         </LinearLayout>
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                    </LinearLayout>
 
-                    <ProgressBar
-                        style="@style/WidgetFoundation.ProgressBar"
+                    <com.google.android.material.progressindicator.LinearProgressIndicator
                         gone="@{viewModel.stateManagerProgress == 0 || viewModel.stateManagerProgress == 100}"
                         android:layout_width="match_parent"
-                        android:layout_gravity="bottom"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
                         android:max="100"
+                        app:trackCornerRadius="4dp"
                         android:progress="@{viewModel.stateManagerProgress}" />
                 </LinearLayout>
             </HorizontalScrollView>
