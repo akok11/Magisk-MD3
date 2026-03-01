@@ -4,12 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="item"
             type="com.topjohnwu.magisk.ui.home.DeveloperItem" />
+
         <variable
             name="viewModel"
             type="com.topjohnwu.magisk.ui.home.HomeViewModel" />
+
     </data>
 
     <LinearLayout
@@ -17,41 +20,32 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="12dp">
+        android:paddingStart="@dimen/l1"
+        android:paddingEnd="@dimen/l1">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{item.handle}"
-            android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textAppearance="@style/AppearanceFoundation.Caption"
             android:textStyle="bold"
-            android:minWidth="100dp"
             tools:text="\@topjohnwu" />
 
-        <View
-            android:id="@+id/ksu_divider_vertical"
-            android:layout_width="1dp"
-            android:layout_height="18dp"
-            android:layout_marginHorizontal="12dp"
-            android:background="?attr/colorOutlineVariant"
-            android:alpha="0.6" />
-
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/developer_links_list"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:clipToPadding="false"
-            android:orientation="horizontal"
-            android:overScrollMode="never"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:items="@{item.items}"
             app:extraBindings="@{viewModel.extraBindings}"
             app:nestedScrollingEnabled="@{false}"
+            android:overScrollMode="never"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:fadingEdgeLength="@dimen/l1"
+            android:orientation="horizontal"
+            android:requiresFadingEdge="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:itemCount="3"
             tools:listitem="@layout/item_icon_link" />
 
     </LinearLayout>
+
 </layout>
