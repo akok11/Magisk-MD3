@@ -6,14 +6,15 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/main_root_layout"
-        app:edgeToEdge="true">
+        android:background="?attr/colorSurface"
+        tools:ignore="RtlHardcoded">
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/main_nav_host"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:behavior_overlapTop="0dp"
             app:defaultNavHost="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:navGraph="@navigation/main" />
@@ -24,7 +25,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             app:elevation="0dp"
-            app:fitsSystemWindowsInsets="top">
+            app:liftOnScroll="true">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/main_toolbar"
@@ -36,14 +37,14 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
+        <com.google.android.material.navigation.NavigationBarView
             android:id="@+id/main_navigation"
-            style="@style/Widget.Foundation.BottomNavigationView"
+            style="@style/Widget.Material3.NavigationBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             app:elevation="0dp"
-            app:labelVisibilityMode="unlabeled"
+            app:labelVisibilityMode="labeled"
             app:menu="@menu/menu_bottom_nav" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
