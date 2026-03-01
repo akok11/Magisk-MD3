@@ -13,13 +13,11 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.content.pm.ShortcutManagerCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.forEach
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
-import com.google.android.material.navigation.NavigationBarView
 import com.topjohnwu.magisk.MainDirections
 import com.topjohnwu.magisk.R
 import com.topjohnwu.magisk.arch.BaseViewModel
@@ -52,16 +50,17 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
     override val viewModel by viewModel<MainViewModel>()
     override val navHostId: Int = R.id.main_nav_host
     override val splashController = SplashController(this)
-
     override val snackbarView: View
-        get() = currentFragment?.snackbarView ?: super.snackbarView
-
+        get() {
+            val fragmentOverride = currentFragment?.snackbarView
+            return fragmentOverride ?: super.snackbarView
+        }
     override val snackbarAnchorView: View?
         get() {
             val fragmentAnchor = currentFragment?.snackbarAnchorView
             return when {
                 fragmentAnchor?.isVisible == true -> fragmentAnchor
-                binding.mainNavigation.isVisible -> binding.mainNavigation
+                binding.mainNavigation.isVisible -> return binding.mainNavigation
                 else -> null
             }
         }
@@ -72,12 +71,6 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
         setTheme(Theme.selected.themeRes)
         splashController.preOnCreate()
         super.onCreate(savedInstanceState)
-
-        // LSPosed 风格：全沉浸渲染
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        window.statusBarColor = Color.TRANSPARENT
-        window.navigationBarColor = Color.TRANSPARENT
-
         splashController.onCreate(savedInstanceState)
     }
 
@@ -92,6 +85,7 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
         showUnsupportedMessage()
         askForHomeShortcut()
 
+        // Ask permission to post notifications for background update check
         if (Config.checkUpdate) {
             withPermission(Manifest.permission.POST_NOTIFICATIONS) {
                 Config.checkUpdate = it
@@ -100,7 +94,7 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
 
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
-        // 彻底解决涟漪色问题，并适配 M3 NavigationBarView
+        // --- 核心修改：强制取消底栏点击涟漪颜色 ---
         binding.mainNavigation.itemRippleColor = ColorStateList.valueOf(Color.TRANSPARENT)
 
         navigation.addOnDestinationChangedListener { _, destination, _ ->
@@ -116,25 +110,31 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
             requestNavigationHidden(!isRootFragment)
 
             binding.mainNavigation.menu.forEach {
-                it.isChecked = (it.itemId == destination.id)
+                if (it.itemId == destination.id) {
+                    it.isChecked = true
+                }
             }
         }
 
         setSupportActionBar(binding.mainToolbar)
 
-        // 必须使用 M3 的 OnItemSelectedListener
         binding.mainNavigation.setOnItemSelectedListener {
             getScreen(it.itemId)?.navigate()
             true
         }
-
+        binding.mainNavigation.setOnItemReselectedListener {
+            // https://issuetracker.google.com/issues/124538620
+        }
         binding.mainNavigation.menu.apply {
             findItem(R.id.superuserFragment)?.isEnabled = Info.showSuperUser
             findItem(R.id.modulesFragment)?.isEnabled = Info.env.isActive && LocalModule.loaded()
         }
 
-        val section = if (intent.action == Intent.ACTION_APPLICATION_PREFERENCES)
-            Const.Nav.SETTINGS else intent.getStringExtra(Const.Key.OPEN_SECTION)
+        val section =
+            if (intent.action == Intent.ACTION_APPLICATION_PREFERENCES)
+                Const.Nav.SETTINGS
+            else
+                intent.getStringExtra(Const.Key.OPEN_SECTION)
 
         getScreen(section)?.navigate()
 
@@ -144,46 +144,33 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            onBackPressed()
-            return true
+        when (item.itemId) {
+            android.R.id.home -> onBackPressed()
+            else -> return super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
+        return true
     }
 
     fun setDisplayHomeAsUpEnabled(isEnabled: Boolean) {
         binding.mainToolbar.startAnimations()
-        binding.mainToolbar.setNavigationIcon(if (isEnabled) R.drawable.ic_back else 0)
+        when {
+            isEnabled -> binding.mainToolbar.setNavigationIcon(R.drawable.ic_back_md2)
+            else -> binding.mainToolbar.navigationIcon = null
+        }
     }
 
-    // --- 重点修改：彻底移除旧版 isHidden 属性 ---
     internal fun requestNavigationHidden(hide: Boolean = true, requiresAnimation: Boolean = true) {
         val bottomView = binding.mainNavigation
-        if (hide) {
-            if (requiresAnimation) {
-                bottomView.animate()
-                    .translationY(bottomView.height.toFloat() + 100f) // 留出一点余量确保完全出屏
-                    .setDuration(250)
-                    .withEndAction { bottomView.isGone = true }
-                    .start()
-            } else {
-                bottomView.isGone = true
-            }
-        } else {
+        if (requiresAnimation) {
             bottomView.isVisible = true
-            if (requiresAnimation) {
-                bottomView.translationY = bottomView.height.toFloat() + 100f
-                bottomView.animate()
-                    .translationY(0f)
-                    .setDuration(250)
-                    .start()
-            } else {
-                bottomView.translationY = 0f
-            }
+            bottomView.isHidden = hide
+        } else {
+            bottomView.isGone = hide
         }
     }
 
     fun invalidateToolbar() {
+        //binding.mainToolbar.startAnimations()
         binding.mainToolbar.invalidate()
     }
 
@@ -206,7 +193,6 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
         }
     }
 
-    // 以下逻辑涉及 Magisk 核心，无需修改
     @SuppressLint("InlinedApi")
     override fun showInvalidStateMessage(): Unit = runOnUiThread {
         MagiskDialog(this).apply {
@@ -220,7 +206,9 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
                             toast(CoreR.string.install_unknown_denied, Toast.LENGTH_SHORT)
                             showInvalidStateMessage()
                         } else {
-                            lifecycleScope.launch { AppMigration.restore(this@MainActivity) }
+                            lifecycleScope.launch {
+                                AppMigration.restore(this@MainActivity)
+                            }
                         }
                     }
                 }
@@ -231,30 +219,62 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
     }
 
     private fun showUnsupportedMessage() {
-        val dialogs = mutableListOf<MagiskDialog>()
         if (Info.env.isUnsupported) {
-            dialogs.add(MagiskDialog(this).apply {
+            MagiskDialog(this).apply {
                 setTitle(CoreR.string.unsupport_magisk_title)
                 setMessage(CoreR.string.unsupport_magisk_msg, Const.Version.MIN_VERSION)
-            })
+                setButton(MagiskDialog.ButtonType.POSITIVE) { text = android.R.string.ok }
+                setCancelable(false)
+            }.show()
         }
-        // ... (其他检查逻辑保持不变)
-        dialogs.forEach { it.apply { 
-            setButton(MagiskDialog.ButtonType.POSITIVE) { text = android.R.string.ok }
-            setCancelable(false)
-        }.show() }
+
+        if (!Info.isEmulator && Info.env.isActive && System.getenv("PATH")
+                ?.split(':')
+                ?.filterNot { File("$it/magisk").exists() }
+                ?.any { File("$it/su").exists() } == true) {
+            MagiskDialog(this).apply {
+                setTitle(CoreR.string.unsupport_general_title)
+                setMessage(CoreR.string.unsupport_other_su_msg)
+                setButton(MagiskDialog.ButtonType.POSITIVE) { text = android.R.string.ok }
+                setCancelable(false)
+            }.show()
+        }
+
+        if (applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0) {
+            MagiskDialog(this).apply {
+                setTitle(CoreR.string.unsupport_general_title)
+                setMessage(CoreR.string.unsupport_system_app_msg)
+                setButton(MagiskDialog.ButtonType.POSITIVE) { text = android.R.string.ok }
+                setCancelable(false)
+            }.show()
+        }
+
+        if (applicationInfo.flags and ApplicationInfo.FLAG_EXTERNAL_STORAGE != 0) {
+            MagiskDialog(this).apply {
+                setTitle(CoreR.string.unsupport_general_title)
+                setMessage(CoreR.string.unsupport_external_storage_msg)
+                setButton(MagiskDialog.ButtonType.POSITIVE) { text = android.R.string.ok }
+                setCancelable(false)
+            }.show()
+        }
     }
 
     private fun askForHomeShortcut() {
-        if (isRunningAsStub && !Config.askedHome && ShortcutManagerCompat.isRequestPinShortcutSupported(this)) {
+        if (isRunningAsStub && !Config.askedHome &&
+            ShortcutManagerCompat.isRequestPinShortcutSupported(this)) {
+            // Ask and show dialog
             Config.askedHome = true
             MagiskDialog(this).apply {
                 setTitle(CoreR.string.add_shortcut_title)
                 setMessage(CoreR.string.add_shortcut_msg)
-                setButton(MagiskDialog.ButtonType.NEGATIVE) { text = android.R.string.cancel }
+                setButton(MagiskDialog.ButtonType.NEGATIVE) {
+                    text = android.R.string.cancel
+                }
                 setButton(MagiskDialog.ButtonType.POSITIVE) {
                     text = android.R.string.ok
-                    onClick { Shortcuts.addHomeIcon(this@MainActivity) }
+                    onClick {
+                        Shortcuts.addHomeIcon(this@MainActivity)
+                    }
                 }
                 setCancelable(true)
             }.show()
