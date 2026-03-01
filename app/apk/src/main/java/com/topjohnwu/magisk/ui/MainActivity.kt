@@ -13,7 +13,9 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.content.pm.ShortcutManagerCompat
-import androidx.core.view.*
+import androidx.core.view.forEach
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import com.topjohnwu.magisk.MainDirections
@@ -32,6 +34,7 @@ import com.topjohnwu.magisk.core.ktx.toast
 import com.topjohnwu.magisk.core.model.module.LocalModule
 import com.topjohnwu.magisk.core.tasks.AppMigration
 import com.topjohnwu.magisk.databinding.ActivityMainMd2Binding
+import com.topjohnwu.magisk.ui.home.HomeFragmentDirections
 import com.topjohnwu.magisk.ui.theme.Theme
 import com.topjohnwu.magisk.view.MagiskDialog
 import com.topjohnwu.magisk.view.Shortcuts
@@ -79,39 +82,27 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
     @SuppressLint("InlinedApi")
     override fun onCreateUi(savedInstanceState: Bundle?) {
         setContentView()
-        
-        // 核心修复 1: 确保底栏不会干扰 Fragment 的触摸事件分发
-        ViewCompat.setOnApplyWindowInsetsListener(binding.mainNavigation) { v, insets ->
-            v.onApplyWindowInsets(insets)
-            insets
-        }
-
         showUnsupportedMessage()
         askForHomeShortcut()
 
+        // Ask permission to post notifications for background update check
         if (Config.checkUpdate) {
             withPermission(Manifest.permission.POST_NOTIFICATIONS) {
                 Config.checkUpdate = it
             }
         }
 
-        // 核心修复 2: 改为 ADJUST_PAN，防止底栏改变视口高度导致滑动死锁
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
-        // 核心修复 3: 取消底栏涟漪并禁用其强制获取焦点
-        binding.mainNavigation.apply {
-            itemRippleColor = ColorStateList.valueOf(Color.TRANSPARENT)
-            isFocusable = false
-            isFocusableInTouchMode = false
-        }
+        // --- 核心修改：强制取消底栏点击涟漪颜色 ---
+        binding.mainNavigation.itemRippleColor = ColorStateList.valueOf(Color.TRANSPARENT)
 
         navigation.addOnDestinationChangedListener { _, destination, _ ->
             isRootFragment = when (destination.id) {
                 R.id.homeFragment,
                 R.id.modulesFragment,
                 R.id.superuserFragment,
-                R.id.logFragment,
-                R.id.settingsFragment -> true
+                R.id.logFragment -> true
                 else -> false
             }
 
@@ -131,9 +122,9 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
             getScreen(it.itemId)?.navigate()
             true
         }
-
-        binding.mainNavigation.setOnItemReselectedListener { }
-
+        binding.mainNavigation.setOnItemReselectedListener {
+            // https://issuetracker.google.com/issues/124538620
+        }
         binding.mainNavigation.menu.apply {
             findItem(R.id.superuserFragment)?.isEnabled = Info.showSuperUser
             findItem(R.id.modulesFragment)?.isEnabled = Info.env.isActive && LocalModule.loaded()
@@ -179,6 +170,7 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
     }
 
     fun invalidateToolbar() {
+        //binding.mainToolbar.startAnimations()
         binding.mainToolbar.invalidate()
     }
 
@@ -186,7 +178,7 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
         return when (name) {
             Const.Nav.SUPERUSER -> MainDirections.actionSuperuserFragment()
             Const.Nav.MODULES -> MainDirections.actionModuleFragment()
-            Const.Nav.SETTINGS -> MainDirections.actionSettingsFragment()
+            Const.Nav.SETTINGS -> HomeFragmentDirections.actionHomeFragmentToSettingsFragment()
             else -> null
         }
     }
@@ -197,7 +189,6 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
             R.id.modulesFragment -> MainDirections.actionModuleFragment()
             R.id.superuserFragment -> MainDirections.actionSuperuserFragment()
             R.id.logFragment -> MainDirections.actionLogFragment()
-            R.id.settingsFragment -> MainDirections.actionSettingsFragment()
             else -> null
         }
     }
@@ -271,6 +262,7 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
     private fun askForHomeShortcut() {
         if (isRunningAsStub && !Config.askedHome &&
             ShortcutManagerCompat.isRequestPinShortcutSupported(this)) {
+            // Ask and show dialog
             Config.askedHome = true
             MagiskDialog(this).apply {
                 setTitle(CoreR.string.add_shortcut_title)
