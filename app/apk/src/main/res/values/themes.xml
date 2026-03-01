@@ -1,48 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Base.V23.Theme.Foundation.Light" parent="Theme.Rikka.Material3.Light.NoActionBar">
-        <item name="android:windowBackground">?attr/colorSurface</item>
+    <style name="Base.V23.Theme.Foundation.Light" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowBackground">?colorSurface</item>
         <item name="android:windowContentOverlay">@null</item>
-        
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowLightNavigationBar">true</item>
-        
         <item name="dialogTheme">@style/ThemeOverlay.Foundation.Dialog</item>
-        
-        <item name="cornerRadius">28dp</item>
-        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Magisk.Large</item>
+        <item name="android:statusBarColor">#40bdbdbd</item>
+        <item name="android:navigationBarColor">#38000000</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
-    <style name="Base.V23.Theme.Foundation" parent="Theme.Rikka.Material3.Dark.NoActionBar">
-        <item name="android:windowBackground">?attr/colorSurface</item>
+    <style name="Base.V23.Theme.Foundation" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="android:windowBackground">?colorSurface</item>
         <item name="android:windowContentOverlay">@null</item>
-        
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar">false</item>
-        
         <item name="dialogTheme">@style/ThemeOverlay.Foundation.Dialog</item>
-        
-        <item name="cornerRadius">28dp</item>
-        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Magisk.Large</item>
+        <item name="android:statusBarColor">#60000000</item>
+        <item name="android:navigationBarColor">#60000000</item>
     </style>
 
     <style name="Theme.Foundation.Light" parent="Base.V23.Theme.Foundation.Light" />
+
     <style name="Theme.Foundation" parent="Base.V23.Theme.Foundation" />
 
-    <style name="Base.V23.ThemeOverlay.Foundation.Dialog" parent="ThemeOverlay.Rikka.Material3.Dialog">
+    <style name="Base.V23.ThemeOverlay.Foundation.Dialog" parent="ThemeOverlay.MaterialComponents.Dialog">
         <item name="android:windowMinWidthMajor">@dimen/abc_dialog_min_width_major</item>
         <item name="android:windowMinWidthMinor">@dimen/abc_dialog_min_width_minor</item>
-        <item name="colorSurface">?attr/colorSurfaceContainerHigh</item>
     </style>
 
     <style name="ThemeOverlay.Foundation.Dialog" parent="Base.V23.ThemeOverlay.Foundation.Dialog" />
-
-    <style name="ShapeAppearance.Magisk.Large" parent="ShapeAppearance.Material3.LargeComponent">
-        <item name="cornerSize">28dp</item>
-    </style>
 
 </resources>
