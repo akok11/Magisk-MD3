@@ -63,17 +63,20 @@ class HomeFragment : BaseFragment<FragmentHomeMd2Binding>(), MenuProvider {
 
     override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_home_md2, menu)
-        
-        // --- 核心修改 1：移除顶部设置按钮 ---
-        menu.removeItem(R.id.action_settings)
-
         if (!Info.isRooted)
             menu.removeItem(R.id.action_reboot)
     }
 
     override fun onMenuItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            // --- 核心修改 2：删除这里的 action_settings 处理逻辑（已移动到底栏） ---
+            R.id.action_settings ->
+                activity?.let {
+                    NavigationActivity.navigate(
+                        HomeFragmentDirections.actionHomeFragmentToSettingsFragment(),
+                        it.findNavController(R.id.main_nav_host),
+                        it.contentResolver,
+                    )
+                }
             R.id.action_reboot -> activity?.let { RebootMenu.inflate(it).show() }
             else -> return super.onOptionsItemSelected(item)
         }
