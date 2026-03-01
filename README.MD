@@ -6,7 +6,7 @@
 
 ## Introduction
 
-Magisk is a suite of open source software for customizing Android, supporting devices higher than Android 6.0.Based on the original version, I have integrated Material Design 3 and implemented several interface-related modifications.
+Magisk MD3 is a suite of open source software for customizing Android, supporting devices higher than Android 6.0.Based on the original version, I have integrated Material Design 3 and implemented several interface-related modifications.
 <br>
 Some highlight features:
 
