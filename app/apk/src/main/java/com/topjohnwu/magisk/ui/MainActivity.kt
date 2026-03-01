@@ -34,7 +34,6 @@ import com.topjohnwu.magisk.core.ktx.toast
 import com.topjohnwu.magisk.core.model.module.LocalModule
 import com.topjohnwu.magisk.core.tasks.AppMigration
 import com.topjohnwu.magisk.databinding.ActivityMainMd2Binding
-import com.topjohnwu.magisk.ui.home.HomeFragmentDirections
 import com.topjohnwu.magisk.ui.theme.Theme
 import com.topjohnwu.magisk.view.MagiskDialog
 import com.topjohnwu.magisk.view.Shortcuts
@@ -85,7 +84,6 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
         showUnsupportedMessage()
         askForHomeShortcut()
 
-        // Ask permission to post notifications for background update check
         if (Config.checkUpdate) {
             withPermission(Manifest.permission.POST_NOTIFICATIONS) {
                 Config.checkUpdate = it
@@ -94,15 +92,17 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
 
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
-        // --- 核心修改：强制取消底栏点击涟漪颜色 ---
+        // 1. 强制取消底栏点击涟漪颜色
         binding.mainNavigation.itemRippleColor = ColorStateList.valueOf(Color.TRANSPARENT)
 
         navigation.addOnDestinationChangedListener { _, destination, _ ->
+            // 2. 将设置页设为根Fragment，保证底栏不被隐藏
             isRootFragment = when (destination.id) {
                 R.id.homeFragment,
                 R.id.modulesFragment,
                 R.id.superuserFragment,
-                R.id.logFragment -> true
+                R.id.logFragment,
+                R.id.settingsFragment -> true
                 else -> false
             }
 
@@ -122,9 +122,9 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
             getScreen(it.itemId)?.navigate()
             true
         }
-        binding.mainNavigation.setOnItemReselectedListener {
-            // https://issuetracker.google.com/issues/124538620
-        }
+        
+        binding.mainNavigation.setOnItemReselectedListener { }
+
         binding.mainNavigation.menu.apply {
             findItem(R.id.superuserFragment)?.isEnabled = Info.showSuperUser
             findItem(R.id.modulesFragment)?.isEnabled = Info.env.isActive && LocalModule.loaded()
@@ -170,25 +170,27 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
     }
 
     fun invalidateToolbar() {
-        //binding.mainToolbar.startAnimations()
         binding.mainToolbar.invalidate()
     }
 
+    // 3. 处理通过 Intent 或 String 跳转的情况
     private fun getScreen(name: String?): NavDirections? {
         return when (name) {
             Const.Nav.SUPERUSER -> MainDirections.actionSuperuserFragment()
             Const.Nav.MODULES -> MainDirections.actionModuleFragment()
-            Const.Nav.SETTINGS -> HomeFragmentDirections.actionHomeFragmentToSettingsFragment()
+            Const.Nav.SETTINGS -> MainDirections.actionSettingsFragment()
             else -> null
         }
     }
 
+    // 4. 处理底栏菜单点击跳转
     private fun getScreen(id: Int): NavDirections? {
         return when (id) {
             R.id.homeFragment -> MainDirections.actionHomeFragment()
             R.id.modulesFragment -> MainDirections.actionModuleFragment()
             R.id.superuserFragment -> MainDirections.actionSuperuserFragment()
             R.id.logFragment -> MainDirections.actionLogFragment()
+            R.id.settingsFragment -> MainDirections.actionSettingsFragment()
             else -> null
         }
     }
@@ -262,7 +264,6 @@ class MainActivity : NavigationActivity<ActivityMainMd2Binding>(), SplashScreenH
     private fun askForHomeShortcut() {
         if (isRunningAsStub && !Config.askedHome &&
             ShortcutManagerCompat.isRequestPinShortcutSupported(this)) {
-            // Ask and show dialog
             Config.askedHome = true
             MagiskDialog(this).apply {
                 setTitle(CoreR.string.add_shortcut_title)
