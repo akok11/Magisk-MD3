@@ -4,36 +4,33 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="item"
             type="com.topjohnwu.magisk.ui.home.IconLink" />
-
         <variable
             name="viewModel"
             type="com.topjohnwu.magisk.ui.home.HomeViewModel" />
-
     </data>
 
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?selectableItemBackground"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true"
         android:minWidth="48dp"
+        android:minHeight="48dp"
         android:onClick="@{() -> viewModel.onLinkPressed(item.link)}"
-        android:padding="@dimen/l_50"
         tools:layout_gravity="center">
 
         <ImageView
             android:id="@+id/developer_link"
-            style="@style/WidgetFoundation.Image.Small"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_gravity="center"
             app:srcCompat="@{item.icon}"
-            app:tint="?colorOnSurface"
+            app:tint="?attr/colorPrimary"
             tools:srcCompat="@drawable/ic_paypal" />
 
     </FrameLayout>
-
 </layout>
