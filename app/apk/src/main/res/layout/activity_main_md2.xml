@@ -6,11 +6,8 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:consumeSystemWindowsInsets="start|end"
-        app:edgeToEdge="true"
-        app:fitsSystemWindowsInsets="start|end"
-        tools:ignore="RtlHardcoded">
+        android:id="@+id/main_root_layout"
+        app:edgeToEdge="true">
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/main_nav_host"
@@ -18,41 +15,35 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:defaultNavHost="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:navGraph="@navigation/main" />
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/main_toolbar_wrapper"
-            style="@style/WidgetFoundation.Appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:elevation="0dp"
             app:fitsSystemWindowsInsets="top">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/main_toolbar"
-                style="@style/WidgetFoundation.Toolbar"
                 android:layout_width="match_parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_scrollFlags="noScroll"
-                tools:layout_marginTop="24dp"
-                tools:title="Home" />
+                android:layout_height="?attr/actionBarSize"
+                app:titleCentered="false"
+                app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge"
+                tools:title="Magisk" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <com.topjohnwu.magisk.widget.ConcealableBottomNavigationView
+        <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/main_navigation"
+            style="@style/Widget.Foundation.BottomNavigationView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:fitsSystemWindows="false"
-            android:paddingBottom="0dp"
-            app:fitsSystemWindowsInsets="start|end|bottom"
-            app:itemHorizontalTranslationEnabled="false"
-            app:itemIconTint="@color/color_menu_tint"
-            app:itemRippleColor="?colorPrimary"
-            app:itemTextAppearanceActive="@style/AppearanceFoundation.Tiny.Bold"
-            app:itemTextAppearanceInactive="@style/AppearanceFoundation.Tiny.Bold"
-            app:itemTextColor="@color/color_menu_tint"
-            app:labelVisibilityMode="labeled"
+            android:layout_gravity="bottom"
+            app:elevation="0dp"
+            app:labelVisibilityMode="unlabeled"
             app:menu="@menu/menu_bottom_nav" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
