@@ -4,15 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.topjohnwu.magisk.ui.settings.SettingsViewModel" />
+
     </data>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/settings_root">
+        android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
             app:items="@{viewModel.items}"
@@ -20,25 +21,21 @@
             android:id="@+id/settings_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
+            android:focusableInTouchMode="false"
             android:clipToPadding="false"
             android:orientation="vertical"
-            
-            android:paddingTop="?attr/actionBarSize"
-            android:paddingBottom="88dp"
-            
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:paddingTop="@dimen/internal_action_bar_size"
+            app:fitsSystemWindowsInsets="top|bottom"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_settings" />
+            tools:layout_marginTop="24dp"
+            tools:listitem="@layout/item_settings"
+            tools:paddingTop="@dimen/l1" />
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/snackbar_container"
-            android:isScrollContainer="false"
-            android:importantForAccessibility="no" />
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+            app:fitsSystemWindowsInsets="top|bottom"/>
+    </FrameLayout>
 
 </layout>
